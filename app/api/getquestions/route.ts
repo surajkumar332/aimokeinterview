@@ -1,6 +1,8 @@
 import { model } from "@/lib/gemini";
 
 export async function POST(req: Request) {
+    console.log(process.env.GEMINI_API_KEY);
+    
     const { company, role } = await req.json();
 
     const prompt = `

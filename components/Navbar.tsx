@@ -11,7 +11,7 @@ export default function Navbar() {
       <div className="flex gap-6 text-gray-300">
         <Link href="/interview">Interview</Link>
         <Link href="/companies">companies</Link>
-        <Link href="/sign-up">Account</Link>
+        <Link href="/sign-in">Account</Link>
       </div>
 
     </nav>

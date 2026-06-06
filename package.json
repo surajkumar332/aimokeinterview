@@ -9,12 +9,16 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "@google/generative-ai": "^0.24.1",
+    "lucide-react": "^1.17.0",
     "mongoose": "^9.6.2",
     "next": "16.2.6",
+    "next-auth": "^4.24.14",
     "openai": "^6.39.0",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "sweetalert2": "^11.26.25"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

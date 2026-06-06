@@ -13,7 +13,8 @@ export async function POST(req: Request) {
         - Each question must be numbered (1 to 10)
         - One question per line
         - Do not add explanations or headings
-        - Keep questions short and clear`
+        - Keep questions short and clear
+        - If the category is not related to programming or coding, return only: "Related to coding languages"`
     );
 
     const question = result.response.text();

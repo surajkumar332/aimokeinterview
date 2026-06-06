@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
+import { signIn } from "next-auth/react";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -13,56 +15,84 @@ export default function SignIn() {
     const storedUser = localStorage.getItem("user");
 
     if (!storedUser) {
-      alert("No account found. Please sign up first.");
+      Swal.fire({
+        text: "No account found. Please sign up first",
+        width: "fit-content",
+        showConfirmButton: false,
+        timer: 2000
+      })
       return;
     }
 
     const user = JSON.parse(storedUser);
 
     if (user.email === email && user.password === password) {
-      alert("Login successful");
-      router.push("/companies");
+      Swal.fire({
+        text: "Login Successfully",
+        timer: 2000,
+        width: "fit-content",
+        showConfirmButton: false
+      });
+      router.push("/");
     } else {
-      alert("Invalid email or password");
+      Swal.fire({
+        text: "Invalid Email or Password",
+        showConfirmButton: false,
+        width: "fit-content",
+        timer: 2000
+      });
     }
+    setEmail("");
+    setPassword("");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black text-white">
-      <div className="bg-gray-900 p-8 rounded-2xl w-full max-w-md">
-
-        <h2 className="text-2xl font-bold mb-6 text-center">Sign In</h2>
-
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full p-3 mb-4 rounded-lg bg-gray-800 outline-none"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full p-3 mb-4 rounded-lg bg-gray-800 outline-none"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-
+    <div className="min-h-screen flex items-center justify-center bg-black text-white px-4 py-8">
+      <div className="w-full max-w-md bg-gray-900 rounded-2xl shadow-xl p-6 sm:p-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6">
+          Sign In
+        </h2>
         <button
-          onClick={handleLogin}
-          className="w-full bg-blue-600 p-3 rounded-lg hover:bg-blue-700"
+          onClick={() => signIn("google")}
+          className="w-full bg-red-600 hover:bg-red-500 text-white p-3 mb-4 rounded-lg cursor-pointer"
         >
-          Login
+          Sign in with Google
         </button>
 
-        <p className="text-sm text-gray-400 mt-4 text-center">
-          Don’t have an account?{" "}
-          <a href="/sign-up" className="text-blue-400">
-            Sign up
+        <div className="space-y-4">
+          <input
+            type="email"
+            placeholder="Email Address"
+            className="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 outline-none focus:border-blue-500 text-sm sm:text-base"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+
+          <input
+            type="password"
+            placeholder="Password"
+            className="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 outline-none focus:border-blue-500 text-sm sm:text-base"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          <button
+            onClick={handleLogin}
+            className="w-full bg-blue-600 hover:bg-blue-700 transition duration-300 p-3 rounded-lg font-semibold cursor-pointer text-sm sm:text-base"
+          >
+            Login
+          </button>
+        </div>
+
+        <p className="text-center text-gray-400 text-sm mt-6">
+          Don't have an account?{" "}
+          <a
+            href="/sign-up"
+            className="text-blue-400 hover:text-blue-300 hover:underline"
+          >
+            Sign Up
           </a>
         </p>
-
       </div>
     </div>
   );

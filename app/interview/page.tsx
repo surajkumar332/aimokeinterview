@@ -11,92 +11,107 @@ export default function InterviewPage() {
   const [loading, setLoading] = useState(false);
   const [level, setLevel] = useState("Beginner");
 
-  // 1. Get Question
   const getQuestion = async () => {
     setLoading(true);
 
-    const res = await fetch("/api/question", {
-      method: "POST",
-      body: JSON.stringify({ category, level: level || "Beginner" }),
-    });
+    try {
+      const res = await fetch("/api/question", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          category,
+          level,
+        }),
+      });
 
-    const data = await res.json();
-    setQuestion(data.question);
+      const data = await res.json();
 
-    setAnswer("");
-    setFeedback("");
-    setScore("");
+      setQuestion(data.question);
+      setAnswer("");
+      setFeedback("");
+      setScore("");
+    } catch (error) {
+      console.error(error);
+    }
 
     setLoading(false);
   };
 
-  // 2. Get Feedback
   const getFeedback = async () => {
     setLoading(true);
 
-    const res = await fetch("/api/feedback", {
-      method: "POST",
-      body: JSON.stringify({ question, answer }),
-    });
+    try {
+      const res = await fetch("/api/feedback", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          question,
+          answer,
+        }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    setFeedback(data.feedback);
+      setFeedback(data.feedback);
 
-    // extract score from AI text (like 8/10)
-    const match = data.feedback.match(/(\d+)\s*\/\s*10/);
-    const extractedScore = match ? match[1] : "0";
+      const match = data.feedback.match(/(\d+)\s*\/\s*10/);
+      const extractedScore = match ? match[1] : "0";
 
-    setScore(extractedScore);
+      setScore(extractedScore);
 
-    // save in session storage 
-    sessionStorage.setItem(
-      "interview",
-      JSON.stringify({
-        category,
-        question,
-        answer,
-        feedback: data.feedback,
-        score: extractedScore,
-      })
-    );
+      sessionStorage.setItem(
+        "interview",
+        JSON.stringify({
+          category,
+          question,
+          answer,
+          feedback: data.feedback,
+          score: extractedScore,
+        })
+      );
+    } catch (error) {
+      console.error(error);
+    }
 
     setLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-5">
-      <div className="w-full max-w-2xl bg-black shadow-xl rounded-2xl p-6 text-white">
-
-        <h1 className="text-3xl font-bold text-blue-500 mb-5">
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4 sm:p-6">
+      <div className="w-full max-w-4xl bg-black rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 text-white">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-500 text-center mb-6">
           AI Mock Interview
         </h1>
 
-        {/* FORM ADDED */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
             getQuestion();
           }}
         >
-          {/* Category Input */}
           <input
-            className="w-full border border-gray-300 text-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter category (JS, React, Hr Round, Aptitude)"
+            className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter category (JavaScript, React, HR Round, Aptitude)"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             required
           />
-          <div className="flex gap-3 mt-4">
+
+          <div className="flex flex-wrap gap-3 ml-50 mt-4">
             {["Beginner", "Intermediate", "Advanced"].map((item) => (
               <button
                 key={item}
                 type="button"
                 onClick={() => setLevel(item)}
-                className={`px-4 py-2 rounded-lg border cursor-pointer 
-                    ${level === item
-                    ? "bg-blue-600 text-white"
-                    : "bg-white text-black hover:bg-gray-400"
+                className={`px-4 py-2 rounded-lg border text-sm sm:text-base cursor-pointer transition
+                  ${
+                    level === item
+                      ? "bg-blue-600 text-white border-blue-600"
+                      : "bg-white text-black hover:bg-gray-300"
                   }`}
               >
                 {item}
@@ -107,75 +122,70 @@ export default function InterviewPage() {
           <button
             type="submit"
             disabled={loading}
-            className="mt-4 bg-blue-600 hover:bg-blue-700 cursor-pointer text-white px-5 py-2 rounded-lg disabled:opacity-50"
+            className="mt-4 w-full ml-75 sm:w-auto bg-blue-600 hover:bg-blue-700 px-5 py-3 rounded-lg cursor-pointer disabled:opacity-50"
           >
             Get Question
           </button>
         </form>
 
-        {/* Question */}
         {question && (
-          <div className="mt-6">
-
-            <h3 className="text-xl font-semibold mb-2">
+          <div className="mt-8">
+            <h3 className="text-xl font-semibold mb-3">
               Question:
             </h3>
 
-            <div className="bg-gray-800 h-fit text-gray-400 p-4 rounded-lg">
+            <div className="bg-gray-800 border border-gray-700 p-4 rounded-lg leading-relaxed">
               {question}
             </div>
 
-            {/* Answer */}
             <textarea
-              className="w-full border border-gray-300 text-gray-200 rounded-lg p-3 mt-4 outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full mt-4 bg-gray-800 border border-gray-700 text-white rounded-lg p-3 outline-none focus:ring-2 focus:ring-green-500"
               placeholder="Write your answer..."
               value={answer}
               onChange={(e) => setAnswer(e.target.value)}
-              rows={5}
+              rows={6}
             />
 
             <button
               onClick={getFeedback}
               disabled={loading}
-              className="mt-4 bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg disabled:opacity-50"
+              className="mt-4 w-full sm:w-auto bg-green-600 hover:bg-green-700 px-5 py-3 rounded-lg cursor-pointer disabled:opacity-50"
             >
               Submit Answer
             </button>
-
           </div>
         )}
 
-        {/* Feedback */}
         {feedback && (
-          <div className="mt-6">
-
-            <div className="bg-blue-100 p-4 rounded-lg text-black">
+          <div className="mt-8">
+            <div className="bg-blue-100 text-black p-5 rounded-xl shadow">
               <h3 className="text-lg font-semibold">
-                Feedback:
+                Feedback
               </h3>
 
-              <p className="mt-2">{feedback}</p>
-            </div>
-
-            <div className="bg-green-100 p-4 rounded-lg mt-4 text-black">
-              <h3 className="text-lg font-semibold">
-                Score:
-              </h3>
-
-              <p className="text-2xl font-bold">
-                {score}/10
+              <p className="mt-2 whitespace-pre-wrap">
+                {feedback}
               </p>
             </div>
 
+            <div className="bg-green-100 text-black p-5 rounded-xl shadow mt-4">
+              <h3 className="text-lg font-semibold">
+                Score
+              </h3>
+
+              <p className="text-3xl font-bold mt-2">
+                {score}/10
+              </p>
+            </div>
           </div>
         )}
 
         {loading && (
-          <p className="text-yellow-400 mt-4">
+          <div className="flex items-center gap-2 mt-6 text-yellow-400">
+            <div className="w-4 h-4 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
             Loading...
-          </p>
+          </div>
         )}
-
       </div>
     </div>
   );
