@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export default function InterviewPage() {
   const [category, setCategory] = useState("");
@@ -81,6 +83,8 @@ export default function InterviewPage() {
   };
 
   return (
+    <>
+    <Navbar/>
     <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4 sm:p-6">
       <div className="w-full max-w-4xl bg-black rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 text-white">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-500 text-center mb-6">
@@ -188,5 +192,7 @@ export default function InterviewPage() {
         )}
       </div>
     </div>
+    <Footer/>
+    </>
   );
 }
